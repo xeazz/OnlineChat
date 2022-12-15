@@ -7,9 +7,7 @@ import java.net.Socket;
 import java.util.Scanner;
 
 public class Client {
-    private Socket clientSocket;
-    private Thread treed1;
-    private Thread treed2;
+    private final Socket clientSocket;
     private final Scanner scanner;
     private final BufferedReader in;
     private final PrintWriter out;
@@ -28,7 +26,7 @@ public class Client {
 
     public void startClient() {
         // поток чтения сообщений с сервера
-        treed1 = new Thread(() -> {
+        Thread treed1 = new Thread(() -> {
             try {
                 while (true) {
                     if (in.ready()) {
@@ -48,7 +46,7 @@ public class Client {
         treed1.interrupt();
 
         // поток отправляющий сообщения приходящие с консоли на сервер
-        treed2 = new Thread(() -> {
+        Thread treed2 = new Thread(() -> {
             while (true) {
                 if (scanner.hasNext()) {
                     String outMessage = scanner.nextLine();

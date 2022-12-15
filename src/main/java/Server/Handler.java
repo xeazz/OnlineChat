@@ -43,7 +43,7 @@ public class Handler {
                 }
                 while (!rxThread.isInterrupted()) {
                     String input = in.readLine();
-                    if (input.equals("/exit")) {
+                    if (input == null || input.equals("/exit")) {
                         disconnect();
                         break;
                     } else {
