@@ -11,6 +11,8 @@ public class Client {
     private final Scanner scanner;
     private final BufferedReader in;
     private final PrintWriter out;
+    private Thread thread1;
+    private Thread thread2;
 
     public Client() {
         LoadSettings loadSettings = new LoadSettings();
@@ -26,46 +28,48 @@ public class Client {
 
     public void startClient() {
         // поток чтения сообщений с сервера
-        Thread treed1 = new Thread(() -> {
+        thread1 = new Thread(() -> {
             try {
-                while (true) {
+                while (!thread1.isInterrupted()) {
                     if (in.ready()) {
                         String inMessage = in.readLine();
-                        if (inMessage == null) {
-                            break;
-                        } else {
-                            System.out.println(inMessage);
-                        }
+                        System.out.println(inMessage);
                     }
                 }
             } catch (IOException e) {
+                e.printStackTrace();
+            } finally {
                 System.out.println("Сеанс завершен!");
             }
         });
-        treed1.start();
-        treed1.interrupt();
+        thread1.start();
 
         // поток отправляющий сообщения приходящие с консоли на сервер
-        Thread treed2 = new Thread(() -> {
-            while (true) {
+        thread2 = new Thread(() -> {
+            while (!thread2.isInterrupted()) {
                 if (scanner.hasNext()) {
                     String outMessage = scanner.nextLine();
                     out.println(outMessage);
                     if (outMessage.equals("/exit")) {
-                        try {
-                            in.close();
-                            out.close();
-                            clientSocket.close();
-                        } catch (IOException e) {
-                            throw new RuntimeException(e);
-                        }
+                        disconnect();
                         break;
                     }
                 }
             }
         });
-        treed2.start();
-        treed2.interrupt();
+        thread2.start();
     }
 
+    public synchronized void disconnect() {
+        thread1.interrupt();
+        thread2.interrupt();
+        try {
+            in.close();
+            scanner.close();
+            out.close();
+            clientSocket.close();
+        } catch (IOException e) {
+            System.out.println("Произошла ошибка: " + e);
+        }
+    }
 }

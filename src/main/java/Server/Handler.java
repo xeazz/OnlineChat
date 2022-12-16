@@ -11,9 +11,6 @@ public class Handler {
     public String userName;
     private static int CLIENT_COUNT = 0;
 
-    //        public Handler (Connections connect, String ipAddr, int port) throws IOException {
-//        this(connect, new Socket(ipAddr, port));
-//    }
     public Handler(Server server, Socket socket) throws IOException {
         CLIENT_COUNT++;
         this.socket = socket;
