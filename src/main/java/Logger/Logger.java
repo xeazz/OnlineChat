@@ -8,7 +8,7 @@ import java.time.format.DateTimeFormatter;
 
 public class Logger {
     private final PrintWriter printWriter;
-    private static Logger instance = null;
+    private static Logger INSTANCE = null;
 
     private Logger() {
         try {
@@ -21,13 +21,17 @@ public class Logger {
     }
 
     public static Logger getInstance() {
-        if (instance == null) {
-            instance = new Logger();
+        if (INSTANCE == null) {
+            synchronized (Logger.class) {
+                if (INSTANCE == null) {
+                    INSTANCE = new Logger();
+                }
+            }
         }
-        return instance;
+        return INSTANCE;
     }
 
-    public synchronized void writeLog(String log) {
+    public void writeLog(String log) {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("HH:mm:ss dd-MM-yyyy");
         printWriter.println("[" + LocalDateTime.now().format(formatter) + "]: " + log);
     }
