@@ -54,7 +54,7 @@ public class Server {
 
     public synchronized void onlineClients(int onlineClients) {
         sendToAllConnections("Клиентов сейчас в сети: " + onlineClients);
-//        logger.writeLog("Клиентов сейчас в сети: " + onlineClients);
+        logger.writeLog("Клиентов сейчас в сети: " + onlineClients);
     }
 
     public void sendToAllConnections(String inMessage) {
